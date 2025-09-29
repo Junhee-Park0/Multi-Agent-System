@@ -78,6 +78,11 @@ target/
 # Jupyter Notebook
 .ipynb_checkpoints
 
+# Google API credentials
+credentials.json
+token.json
+
+
 # IPython
 profile_default/
 ipython_config.py
