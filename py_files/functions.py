@@ -1,7 +1,7 @@
 # tool로 정의할 필요 없는 일반 함수들
 # schemas : EmailItem, ParsedQuery, EmailFetchInput, EmailFetchOutput, EmailFetchOutputs, UserChoice
-from py_files.schemas import EmailItem, ParsedQuery, EmailFetchInput, EmailFetchOutput, UserChoice
-from py_files.states import EmailAgentState
+from py_files.schemas import EmailItem, ParsedQuery, EmailFetchInput, EmailFetchOutput, UserChoice, ParsedPrompt, EmailReply
+from py_files.states import EmailAgentState, EmailAgentState2
 from typing import TypedDict, List
 
 
@@ -144,6 +144,84 @@ def should_retry(state : EmailAgentState) -> str:
         if feedback.kind == "CONFIRM":
             return "completed"
         else:
-            return "email_fetcher"
+            return "feedback_search"
+    else:
+        return "error"
+
+
+def parse_prompt(prompt : str) -> ParsedPrompt:
+    """요구사항을 파싱하여 주어진 형식에 맞는 파싱 결과를 반환"""
+    from langchain_core.prompts import ChatPromptTemplate
+    from langchain.chat_models import init_chat_model
+
+    prompt_parser_prompt = load_prompts("prompt_parser_prompt")
+    
+    llm_structured = init_chat_model("openai:gpt-4o-mini", temperature=0.0).with_structured_output(ParsedPrompt)
+    
+    prompt = ChatPromptTemplate.from_messages(
+        [
+            ("system", prompt_parser_prompt['role'] + "\n" + prompt_parser_prompt['instructions']),
+            ("user", prompt_parser_prompt["inputs"].format(prompt = prompt))
+        ]
+    )
+
+    messages = prompt.format_messages(prompt = prompt)
+    response = llm_structured.invoke(messages)
+
+    return response 
+
+def parse_edit_request(parsed_prompt : ParsedPrompt, edit_request : str) -> ParsedPrompt:
+    """수정 요구사항을 파싱하여 주어진 형식에 맞는 파싱 결과를 반환"""
+    from langchain_core.prompts import ChatPromptTemplate
+    from langchain.chat_models import init_chat_model
+
+    edit_request_parser_prompt = load_prompts("edit_request_parser_prompt")
+    
+    llm_structured = init_chat_model("openai:gpt-4o-mini", temperature=0.0).with_structured_output(ParsedPrompt)
+    
+    prompt = ChatPromptTemplate.from_messages(
+        [
+            ("system", edit_request_parser_prompt['role'] + "\n" + edit_request_parser_prompt['instructions']),
+            ("user", edit_request_parser_prompt["inputs"].format(parsed_prompt = parsed_prompt, edit_request = edit_request))
+        ]
+    )
+    
+    messages = prompt.format_messages(parsed_prompt = parsed_prompt, edit_request = edit_request)
+    response = llm_structured.invoke(messages)
+
+    return response
+
+def generate_email_reply(fetched_email : EmailFetchOutput, previous_reply : EmailReply, prompt : ParsedPrompt) -> EmailReply:
+    """이메일 답변을 생성하는 함수(초안, 수정 둘 다 사용)"""
+    from langchain_core.prompts import ChatPromptTemplate
+    from langchain.chat_models import init_chat_model
+
+    email_reply_prompt = load_prompts("email_reply_prompt")
+
+    llm_structured = init_chat_model("openai:gpt-4o-mini", temperature=0.0).with_structured_output(EmailReply)
+
+    prompt = ChatPromptTemplate.from_messages(
+        [
+            ("system", email_reply_prompt['role'] + "\n" + email_reply_prompt['instructions']),
+            ("user", email_reply_prompt["inputs"].format(fetched_email = fetched_email, previous_reply = previous_reply, prompt = prompt))
+        ]
+    )
+    
+    messages = prompt.format_messages(fetched_email = fetched_email, previous_reply = previous_reply, prompt = prompt) # 초안이면 previous_reply는 None
+    response = llm_structured.invoke(messages)
+
+    return response
+
+def should_edit(state : EmailAgentState2) -> str:
+    """사용자 피드백에 따라 다음 단계 결정"""
+    if not state.get("user_feedback"):
+        return "error"
+    
+    feedback = state["user_feedback"]
+    if hasattr(feedback, "kind"):
+        if feedback.kind == "CONFIRM":
+            return "completed"
+        else:
+            return "feedback_edit"
     else:
         return "error"

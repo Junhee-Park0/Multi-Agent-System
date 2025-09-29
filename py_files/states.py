@@ -1,5 +1,5 @@
 from typing import List, Dict, Literal, TypedDict, Optional
-from .schemas import EmailItem, ParsedQuery, EmailFetchOutput, UserChoice
+from .schemas import EmailItem, ParsedQuery, EmailFetchOutput, UserChoice, EmailReply, ParsedEditRequest, ParsedPrompt
 
 class EmailAgentState(TypedDict, total = False):
     query : str
@@ -19,4 +19,22 @@ class EmailAgentState(TypedDict, total = False):
     status : Literal["INITIAL", "QUERY_PARSED", "EMAIL_COLLECTED", "FETCHED_EMAIL", "RECEIVED_FEEDBACK", "RETRY_SEARCH", "CONFIRMED", "ERROR"]
 
     error : Optional[str]
-    attempt_count : int
+
+class EmailAgentState2(TypedDict, total = False):
+    fetched_email : EmailFetchOutput
+
+    prompt : str
+    parsed_prompt : ParsedPrompt
+
+    # 피드백
+    edit_request : Optional[str]
+    user_feedback : Optional[UserChoice]
+    parsed_edit_request : Optional[ParsedEditRequest]
+    feedback_history : Optional[List[str]]
+
+    reply_draft : EmailReply
+
+    # state 관리
+    status : Literal["INITIAL", "RECEIVED_PROMPT", "PARSED_PROMPT", "FIRST_DRAFT_GENERATED", "EDIT_REQUEST_PARSED", "CONFIRMED", "ERROR", "EMAIL_SENT"]
+
+    error : Optional[str]

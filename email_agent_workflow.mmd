@@ -1,0 +1,28 @@
+---
+config:
+  flowchart:
+    curve: linear
+---
+graph TD;
+	__start__([<p>__start__</p>]):::first
+	get_email_prompt(get_email_prompt)
+	parse_prompt(parse_prompt)
+	generate_email_reply(generate_email_reply)
+	edit_with_feedback(edit_with_feedback)
+	feedback_edit(feedback_edit)
+	completed(completed)
+	error(error)
+	__end__([<p>__end__</p>]):::last
+	__start__ --> get_email_prompt;
+	edit_with_feedback -.-> completed;
+	edit_with_feedback -.-> error;
+	edit_with_feedback -.-> feedback_edit;
+	feedback_edit --> generate_email_reply;
+	generate_email_reply --> edit_with_feedback;
+	get_email_prompt --> parse_prompt;
+	parse_prompt --> generate_email_reply;
+	completed --> __end__;
+	error --> __end__;
+	classDef default fill:#f2f0ff,line-height:1.2
+	classDef first fill-opacity:0
+	classDef last fill:#bfb6fc

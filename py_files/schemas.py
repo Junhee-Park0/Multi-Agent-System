@@ -33,11 +33,26 @@ class EmailFetchOutput(BaseModel):
     content : str
     reasoning : str = Field(..., description = "The reasoning behind the relevance")
 
-class EmailFetchOutputs(BaseModel):
-    """이메일 검색 결과 리스트"""
-    emails : List[EmailFetchOutput] = Field(..., description = "The list of emails fetched")
-    total_filtered : int = Field(..., description = "The total number of emails filtered")
-
 class UserChoice(BaseModel):
     """이메일 검색 후 사용자의 피드백"""
     kind : Literal["CONFIRM", "RETRY"]
+
+class ParsedPrompt(BaseModel):
+    """요구사항 파싱 결과"""
+    instructions : List[str] = Field(..., description = "The instructions extracted from the prompt")
+    tone : Optional[str] = Field(description = "The tone extracted from the prompt")
+    constraints : Optional[str] = Field(description = "The constraints extracted from the prompt")
+
+class ParsedEditRequest(BaseModel):
+    """요청한 수정사항들(하나만 만들어두고 업데이트하기)"""
+    instructions : str = Field(..., description = "The instructions for the email reply")
+    tone : str = Field(..., description = "The tone of the email reply")
+    constraints : str = Field(..., description = "The constraints for the email reply")
+    
+class EmailReply(BaseModel):
+    """생성된 이메일 답변"""
+    version : str = Field(..., description = "The version of the email reply")
+    to : str = Field(..., description = "The recipient of the email reply")
+    subject : str = Field(..., description = "The subject of the email reply")
+    content : str = Field(..., description = "The content of the email reply")
+

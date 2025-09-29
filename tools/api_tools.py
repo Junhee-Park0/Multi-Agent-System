@@ -42,7 +42,6 @@ def get_emails():
     
     return payloads, ids
 
-@tool
 def parse_emails() -> List[Dict]:
     """
     return : INBOX에 있는 메일들의 정보를 담은 리스트
@@ -76,7 +75,6 @@ def parse_emails() -> List[Dict]:
 from email.message import EmailMessage
 
 
-@tool
 def send_emails(to, subject, text):
     """
     to : 받는 사람

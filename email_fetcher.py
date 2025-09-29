@@ -4,7 +4,6 @@ Email Fetcher Agent
 from langgraph.graph import StateGraph, END, START
 from langchain_core.prompts import ChatPromptTemplate
 from langchain.chat_models import init_chat_model
-from langgraph.types import interrupt
 
 import os 
 # 프로젝트 루트 설정
@@ -139,6 +138,7 @@ def completed_node(state : EmailAgentState) -> EmailAgentState:
 def error_node(state : EmailAgentState) -> EmailAgentState:
     """오류 노드"""
     print("\n❌ 이메일 검색 중 오류가 발생했습니다.")
+    print(f"오류 메시지: {state['error']}")
     return {**state, "status" : "ERROR"}
 
 
@@ -167,7 +167,7 @@ def email_fetcher_agent():
         should_retry,
         {
             "completed" : "completed",
-            "feedback_search" : "feedback_search",  # 새로운 피드백 기반 검색 경로
+            "email_fetcher" : "feedback_search",  # 새로운 피드백 기반 검색 경로
             "error" : "error"
         }
     )
@@ -179,7 +179,7 @@ def email_fetcher_agent():
 
     return workflow.compile()
 
-def main(query : str = None):
+def email_fetcher_main(query : str = None):
     """이메일 검색 에이전트 실행"""
     print("=" * 60)
     print("📧 이메일 검색 에이전트 실행")
@@ -213,5 +213,5 @@ def main(query : str = None):
         return None
 
 if __name__ == "__main__":
-    main()
+    email_fetcher_main()
     

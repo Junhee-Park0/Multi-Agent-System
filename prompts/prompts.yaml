@@ -36,11 +36,11 @@ fetching_email_prompt:
 categorize_prompt:
   role: |
     You are a decision router for an email assistant.
-    Categorize how the user wants to proceed after seeing search results.
+    Categorize how the user wants to proceed after seeing the results.
   instructions: |
     - Categorize the user's response into one of two categories: 
-      1. "CONFIRM" : The user wants to confirm the result.
-      2. "RETRY" : The user wants to search again.
+      1. "CONFIRM" : The user is content with the result and wants to confirm the result.
+      2. "RETRY" : The user wants to get another result (search the email again, or modify the draft email).
   inputs: |
     user_response: "{user_response}"
 
@@ -69,6 +69,55 @@ fetching_email_with_feedback_prompt:
     emails : {emails}
     user_feedback : "{user_feedback}"
     previous_email : {previous_email}
+
+# 초안 요구사항 파싱 프롬프트
+prompt_parser_prompt:
+  role: |
+    You are a helpful assistant that parses the user's prompt.
+  instructions: |
+    - Parse the user's prompt into instructions, tone, and constraints.
+    - Instructions : The instructions for the email reply. The instructions should be detailed and specific.
+    - Tone : The tone of the email reply. If the user does not provide a specific tone, use "formal".
+    - Constraints : The constraints for the email reply. If not provided, use "none".
+  inputs: |
+    prompt : "{prompt}"
+
+# 수정 요구사항 파싱 프롬프트
+edit_request_parser_prompt:
+  role: |
+    You are a helpful assistant that parses the user's edit request.
+  instructions: |
+    - Parse the user's edit request into instructions, tone, and constraints and then update the original parsed prompt.
+    - Keep in mind that the user's edit request is to edit the previous parsed prompt and the generated email reply..
+    - Instructions : The instructions for the email reply. The instructions should be detailed and specific.
+    - Tone : The tone of the email reply. If the user does not provide a specific tone, use "formal".
+    - Constraints : The constraints for the email reply. If not provided, use "none".
+  inputs: |
+    parsed_prompt : "{parsed_prompt}"
+    edit_request : "{edit_request}"
+
+# 이메일 답변 생성 프롬프트
+email_reply_prompt:
+  role: |
+    You are a helpful assistant that generates an email reply based on the user's request.
+  instructions: |
+    - Refer to the fetched email and then generate an email reply based on the user's request.
+    - The email reply should be in Korean.
+    - Carefully analyze the instructions, tone, and constraints, and generate an email reply based on the instructions, tone, and constraints.
+    - Create an appropriate subject for the email based on the content of the email.
+
+    - If the previous reply is provided, compare the previous reply with the prompt, then **update the email reply based on the missing instructions, tone, and constraints.**
+    - If the previous reply is provided, **the email should not be the same as the previous one**.
+    - Sometimes, the user might ask to update the subject("제목") of the email reply. In that case, update the subject of the email reply as the user wants.
+    - If the user asks to change the tone("말투") of the email reply, update the tone of the email as the user wants. 
+
+    - If the previous reply is not provided or "None", refer to the fetched email and then generate an first draft of the email reply based on the user's request.
+    - The version starts from 1, in case of the first draft. Every time you generate an email reply, update the version by adding 1.
+    - The value of the 'to' field of the email reply should be the same as that of the 'sender' field of the fetched email.
+  inputs: |
+    fetched_email : "{fetched_email}"
+    previous_reply : "{previous_reply}" # 초안 답변 (초안 생성인 경우 None으로 제공)
+    prompt : "{prompt}"
 
 # Agent 프롬프트
 agent_system_prompt:
