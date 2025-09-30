@@ -179,7 +179,7 @@ def email_responder_agent():
 
     return workflow.compile()
 
-def email_responder_main(fetched_email, query : str = None):
+def email_responder_main(fetched_email : EmailFetchOutput = None, query : str = None):
     """이메일 답장 생성 에이전트 실행"""
     print("=" * 60)
     print("📧 이메일 답장 생성 에이전트 실행")
@@ -207,13 +207,4 @@ def email_responder_main(fetched_email, query : str = None):
         return None
 
 if __name__ == "__main__":
-    output_email = {
-    "id": "1998aa39fff81eac",
-    "subject": "이번 주 미팅 일정",
-    "sender": "\"박준희\" <jhpark0256@naver.com>",
-    "date": "Sat, 27 Sep 2025 19:06:40 +0900",
-    "content": "혹시 이번 주 중으로 온라인 미팅이 가능할까요? 화요일 오후나 목요일 오전이 편할 것 같습니다.",
-    "reasoning": "이 이메일은 '미팅 관련 이메일'이라는 쿼리와 잘 일치합니다."
-}
-    fetched_email = EmailFetchOutput(**output_email)
-    email_responder_main(fetched_email)
+    email_responder_main()

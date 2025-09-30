@@ -144,7 +144,7 @@ def should_retry(state : EmailAgentState) -> str:
         if feedback.kind == "CONFIRM":
             return "completed"
         else:
-            return "feedback_search"
+            return "email_fetcher"
     else:
         return "error"
 

@@ -106,10 +106,22 @@ email_reply_prompt:
     - Carefully analyze the instructions, tone, and constraints, and generate an email reply based on the instructions, tone, and constraints.
     - Create an appropriate subject for the email based on the content of the email.
 
-    - If the previous reply is provided, compare the previous reply with the prompt, then **update the email reply based on the missing instructions, tone, and constraints.**
+    - If the user wants to change something, you should write a new version of the email reply.
     - If the previous reply is provided, **the email should not be the same as the previous one**.
-    - Sometimes, the user might ask to update the subject("제목") of the email reply. In that case, update the subject of the email reply as the user wants.
-    - If the user asks to change the tone("말투") of the email reply, update the tone of the email as the user wants. 
+    - There are four cases to update the email reply:
+      1. The user wants to change the subject("제목")
+        - Change the subject of the email reply as the user wants.
+        - If provided a specific new subject, use the new subject itself.
+        - If not provided a specific new subject, change the subject of the email reply based on the requirements.
+      2. The user wants to change the tone("말투", "어투")
+        - Change the tone of the email as the user wants. 
+        - Make sure to change the tone dramatically.
+      3. The user wants to update or add the content of the email reply
+        - If the previous reply is provided, compare the previous reply with the prompt, then **update the email reply based on the missing instructions, tone, and constraints.**
+        - Make sure you catch all the details of the prompt, and then create a new version using all the details.
+      4. The user wants to change a certain part of the email reply
+        - Change the part of the email reply as the user wants.
+        - Carefully analyze the prompt, and then change the part of the email reply based on the prompt.
 
     - If the previous reply is not provided or "None", refer to the fetched email and then generate an first draft of the email reply based on the user's request.
     - The version starts from 1, in case of the first draft. Every time you generate an email reply, update the version by adding 1.
