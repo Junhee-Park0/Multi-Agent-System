@@ -31,8 +31,6 @@ def get_emails():
     messages = results.get("messages", [])
     if not messages:
         print("No messages found")
-    else:
-        print("Chat messages : ")
 
         for message in messages:
             ids.append(message["id"])

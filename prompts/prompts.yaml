@@ -105,7 +105,7 @@ email_reply_prompt:
     - The email reply should be in Korean.
     - Carefully analyze the instructions, tone, and constraints, and generate an email reply based on the instructions, tone, and constraints.
     - Create an appropriate subject for the email based on the content of the email.
-
+    - You are writing the email on behalf of the user, named "박준희".
     - If the user wants to change something, you should write a new version of the email reply.
     - If the previous reply is provided, **the email should not be the same as the previous one**.
     - There are four cases to update the email reply:
