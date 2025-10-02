@@ -73,7 +73,7 @@ fetching_email_with_feedback_prompt:
 # 초안 요구사항 파싱 프롬프트
 prompt_parser_prompt:
   role: |
-    You are a helpful assistant that parses the user's prompt.
+    You are a helpful assistant that parses the user's prompt. You are writing the email on behalf of the user, named "박준희".
   instructions: |
     - Parse the user's prompt into instructions, tone, and constraints.
     - Instructions : The instructions for the email reply. The instructions should be detailed and specific.
@@ -111,6 +111,7 @@ email_reply_prompt:
     - There are four cases to update the email reply:
       1. The user wants to change the subject("제목")
         - Change the subject of the email reply as the user wants.
+        - The subject is in the "subject" field of the email reply.
         - If provided a specific new subject, use the new subject itself.
         - If not provided a specific new subject, change the subject of the email reply based on the requirements.
       2. The user wants to change the tone("말투", "어투")
