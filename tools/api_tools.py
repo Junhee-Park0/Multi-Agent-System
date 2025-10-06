@@ -32,11 +32,11 @@ def get_emails():
     if not messages:
         print("No messages found")
 
-        for message in messages:
-            ids.append(message["id"])
-            message_data = service.users().messages().get(userId = "me", id = message["id"], format = "full").execute()
-            payload = message_data.get("payload", {})
-            payloads.append(payload)
+    for message in messages:
+        ids.append(message["id"])
+        message_data = service.users().messages().get(userId = "me", id = message["id"], format = "full").execute()
+        payload = message_data.get("payload", {})
+        payloads.append(payload)
     
     return payloads, ids
 
@@ -107,3 +107,7 @@ def send_emails(to, subject, text):
     except Exception as e:
         print("Error occurred :", e)
         return None    
+
+if __name__ == "__main__":
+    get_emails()
+

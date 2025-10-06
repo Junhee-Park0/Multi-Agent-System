@@ -10,9 +10,10 @@ from typing import List, Dict
 SCOPES = ["https://www.googleapis.com/auth/gmail.readonly"]
 
 def get_emails(label_name):
-    project_root = os.path.dirname("Multi-Agent-System")
-    script_dir = os.path.join(project_root, "gmail_api")
-    token_path = os.path.join(script_dir, "token.json")
+    # project_root = os.path.dirname("Multi-Agent-System")
+    # script_dir = os.path.join(project_root, "gmail_api")
+    # token_path = os.path.join(script_dir, "token.json")
+    token_path = "token.json"
 
     creds = Credentials.from_authorized_user_file(token_path, SCOPES)
     service = build("gmail", "v1", credentials = creds)
@@ -21,7 +22,7 @@ def get_emails(label_name):
     results = service.users().messages().list(
         userId = "me",
         labelIds = [f"{label_name}"],
-        maxResults = 10
+        maxResults = 5
     ).execute()
     payloads = []
     ids = []
