@@ -2,6 +2,7 @@ from typing import List, Dict, Literal, TypedDict, Optional
 from .schemas import EmailItem, ParsedQuery, EmailFetchOutput, UserChoice, EmailReply, ParsedEditRequest, ParsedPrompt
 
 class EmailAgentState(TypedDict, total = False):
+    """Email Fetcher Agent State"""
     query : str
     all_emails : List[Dict]
     formatted_emails : List[Dict]
@@ -21,6 +22,7 @@ class EmailAgentState(TypedDict, total = False):
     error : Optional[str]
 
 class EmailAgentState2(TypedDict, total = False):
+    """Email Responder Agent State"""
     fetched_email : EmailFetchOutput
 
     prompt : str
